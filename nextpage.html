@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Birthday Cake Surprise</title>
+<style>
+  :root{
+    --pink1:#ffd1e1;
+    --pink2:#ff9bbd;
+    --pink3:#ff6ba1;
+    --cream:#fff5f8;
+    --shadow:rgba(0,0,0,.18);
+    --glow:rgba(255,105,180,.35);
+  }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: url('06f47429-df65-48fe-a76e-122d240d9e67.png') center/cover no-repeat fixed;
+  }
+
+  .overlay{
+    position:fixed; inset:0;
+    background: radial-gradient(ellipse at center,
+                rgba(255,255,255,.55) 0%,
+                rgba(255,255,255,.35) 35%,
+                rgba(255,255,255,.15) 60%,
+                rgba(255,255,255,0) 100%);
+    pointer-events:none;
+  }
+
+  .stage{
+    position:relative;
+    text-align:center;
+    padding:24px 20px 10px;
+    border-radius:24px;
+  }
+
+  #preText{
+    font-weight:800;
+    font-size: clamp(22px, 4vw, 34px);
+    letter-spacing:.5px;
+    color:#ff3e87;
+    text-shadow: 0 6px 24px var(--glow);
+    margin:0 0 14px;
+    transition:opacity .6s ease, transform .6s ease;
+  }
+
+  #postText{
+    font-weight:900;
+    font-size: clamp(24px, 5vw, 40px);
+    letter-spacing:.6px;
+    color:#ff0f6b;
+    text-shadow: 0 8px 28px var(--glow);
+    margin:14px 0 0;
+    opacity:0;
+    transform: translateY(-8px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+
+  .cake{
+    position:relative;
+    margin-inline:auto;
+    width:min(82vw, 320px);
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .plate{
+    width: 100%;
+    height: 18px;
+    background: linear-gradient(#ffffff,#f2f2f2);
+    border-radius: 999px;
+    box-shadow:
+      0 8px 22px var(--shadow),
+      inset 0 2px 6px rgba(0,0,0,.08);
+    transform: translateY(8px);
+  }
+
+  .layer{
+    margin: 0 auto;
+    border-radius: 28px;
+    box-shadow:
+      0 10px 24px var(--shadow),
+      inset 0 12px 18px rgba(255,255,255,.55);
+    position:relative;
+  }
+  .layer.top{width: 60%; height: 70px; background: linear-gradient(180deg, #ffc9dc 0%, #ff9abd 100%);}
+  .layer.mid{width: 78%; height: 78px; background: linear-gradient(180deg, #ffb2cd 0%, #ff86b0 100%); margin-top: 12px;}
+  .layer.base{width: 100%; height: 86px; background: linear-gradient(180deg, var(--pink2) 0%, var(--pink3) 100%); margin-top: 12px;}
+
+  .cream-top{
+    position:absolute; top:-10px; left:50%;
+    transform: translateX(-50%);
+    width: 66%; height: 36px;
+    background: radial-gradient(120% 140% at 50% 10%, #fff 0%, var(--cream) 65%, #ffd7e6 100%);
+    border-radius: 999px;
+    box-shadow: 0 10px 24px var(--shadow), inset 0 6px 12px rgba(255,255,255,.9);
+  }
+
+  .drips{position:absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 70%; height: 26px;}
+  .drip{position:absolute; bottom:0; width: 18px; height: 26px; background: var(--cream); border-radius: 12px; box-shadow: inset 0 4px 6px rgba(255,255,255,.8);}
+  .drip:nth-child(1){left: 6% ; height:24px; width:16px;}
+  .drip:nth-child(2){left: 22%; height:28px;}
+  .drip:nth-child(3){left: 40%; height:22px; width:14px;}
+  .drip:nth-child(4){left: 58%; height:26px;}
+  .drip:nth-child(5){left: 78%; height:30px; width:16px;}
+
+  .candle{
+    position:absolute; left:50%; top:-78px; transform: translateX(-50%);
+    width: 20px; height: 74px; border-radius: 10px;
+    background: repeating-linear-gradient(135deg, #ffffff 0 10px, #ffd7e9 10px 20px);
+    box-shadow: inset 0 6px 10px rgba(255,255,255,.8), 0 6px 14px var(--shadow);
+    z-index:3;
+    transition: transform 1s ease, top 1s ease;
+  }
+  .candle::after{
+    content:""; position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    width: 24px; height: 14px; border-radius: 999px;
+    background: #fff0f6; box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  }
+  .flame{
+    position:absolute; top:-34px; left:50%; transform: translateX(-50%);
+    width: 14px; height: 22px; border-radius: 999px 999px 60% 60%;
+    background: radial-gradient(circle at 50% 35%, #fff7b1 0%, #ffd24d 55%, #ff9b00 90%);
+    filter: drop-shadow(0 0 8px rgba(255,190,0,.75));
+    animation: flicker .6s infinite alternate ease-in-out;
+    transform-origin: center bottom;
+  }
+  @keyframes flicker{
+    from { transform: translateX(-50%) scale(1) rotate(-2deg); opacity:.95; }
+    to   { transform: translateX(-50%) scale(1.15) rotate(2deg); opacity:1; }
+  }
+
+  .cut .candle{ top: 110px; transform: translateX(-50%) rotate(88deg);}
+  .cut .flame{ opacity:0; transition: opacity .2s ease; }
+  .cut #preText{ opacity:0; transform:translateY(-8px); }
+  .cut #postText{ opacity:1; transform:translateY(0); }
+
+  .piece{position: fixed; top:-12px; opacity: .9; animation: fallSpin linear forwards;}
+  @keyframes fallSpin{to{transform: translateY(120vh) rotate(720deg);}}
+
+  /* Balloons */
+  .balloon{
+    position: fixed;
+    bottom: -150px;
+    width: 60px; height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #fff, var(--color));
+    box-shadow: 0 0 20px var(--color);
+    animation: floatUp linear forwards;
+  }
+  @keyframes floatUp {
+    to { transform: translateY(-120vh); opacity:0; }
+  }
+
+  /* Next Page button */
+  #nextBtn{
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    background: #ff4e91;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,.2);
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<div class="stage" id="stage">
+  <h2 id="preText">Let’s Cut the Cake! 🎂</h2>
+  <div class="cake" id="cake">
+    <div class="layer top">
+      <div class="cream-top"></div>
+      <div class="drips">
+        <span class="drip"></span><span class="drip"></span><span class="drip"></span><span class="drip"></span><span class="drip"></span>
+      </div>
+      <div class="candle" id="candle"><div class="flame"></div></div>
+    </div>
+    <div class="layer mid"></div>
+    <div class="layer base"></div>
+    <div class="plate"></div>
+  </div>
+  <h2 id="postText">Happy Birthday Sonu! 🎉</h2>
+</div>
+
+<button id="nextBtn" onclick="window.location.href='page2.html'">Next Page ➡️</button>
+
+<script>
+const stage = document.getElementById('stage');
+const cake = document.getElementById('cake');
+const candle = document.getElementById('candle');
+const nextBtn = document.getElementById('nextBtn');
+let alreadyCut = false;
+
+cake.addEventListener('click', cutCake);
+candle.addEventListener('click', cutCake);
+
+function cutCake(){
+  if (alreadyCut) return;
+  alreadyCut = true;
+  stage.classList.add('cut');
+  launchPaperPieces(140);
+  launchBalloons(20);
+  setTimeout(()=> nextBtn.style.display = 'block', 2000);
+}
+
+function launchPaperPieces(count){
+  const colors = ['#ff4e91','#ffcf4d','#73f0a5','#6fb8ff','#ff8c5a','#ff76c1','#ffe27a','#9efff3'];
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'piece';
+    p.style.width = rand(6,12)+'px';
+    p.style.height = rand(10,20)+'px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.left = Math.random()*window.innerWidth+'px';
+    p.style.animationDuration = rand(2200,3800)+'ms';
+    p.style.animationDelay = rand(0,900)+'ms';
+    document.body.appendChild(p);
+    setTimeout(()=> p.remove(), 5000);
+  }
+}
+
+function launchBalloons(count){
+  const colors = ['#ff4e91','#ffcf4d','#73f0a5','#6fb8ff','#ff8c5a','#ff76c1','#ffe27a','#9efff3'];
+  for(let i=0;i<count;i++){
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    b.style.setProperty('--color', colors[Math.floor(Math.random()*colors.length)]);
+    b.style.left = Math.random()*window.innerWidth+'px';
+    b.style.animationDuration = rand(4000,7000)+'ms';
+    b.style.animationDelay = rand(0,1500)+'ms';
+    document.body.appendChild(b);
+    setTimeout(()=> b.remove(), 8000);
+  }
+}
+
+function rand(min, max){
+  return Math.floor(Math.random()*(max-min+1))+min;
+}
+</script>
+</body>
+</html>
